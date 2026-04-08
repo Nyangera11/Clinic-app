@@ -1,0 +1,87 @@
+{
+  "patients": [
+    {
+      "id": 1,
+      "createdAt": "2026-04-02T09:50:02.823Z",
+      "firstName": "Joshua ",
+      "lastName": "Zawadi",
+      "email": "josh@gmail.com",
+      "phone": "0115099166",
+      "dateOfBirth": "2001-06-26",
+      "village": "Lokitoktok",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "createdAt": "2026-04-02T12:58:54.552Z",
+      "firstName": "patient123",
+      "lastName": "patient123",
+      "email": "patient@gmail.com",
+      "phone": null,
+      "dateOfBirth": null,
+      "village": "Unknown",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "createdAt": "2026-04-08T09:16:00.001Z",
+      "firstName": "Zawadi",
+      "lastName": "Joshua ",
+      "email": "josh@gmai.com",
+      "phone": "0115099166",
+      "dateOfBirth": null,
+      "village": "Unknown",
+      "status": "Active"
+    }
+  ],
+  "appointments": [
+    {
+      "id": 1,
+      "createdAt": "2026-04-02T12:58:54.608Z",
+      "status": "Confirmed",
+      "patientId": 2,
+      "provider": "Dr. Amina Hassan",
+      "service": "Laboratory Tests",
+      "scheduledAt": "March 20, 2026 14:30",
+      "notes": "Location: Lokichoggio"
+    },
+    {
+      "id": 2,
+      "createdAt": "2026-04-06T12:39:08.344Z",
+      "status": "Confirmed",
+      "patientId": 1,
+      "patientName": "Zawadi Joshua ",
+      "patientEmail": "josh@gmail.com",
+      "provider": "Dr. Amina Hassan",
+      "service": "General Checkup",
+      "scheduledAt": "March 20, 2026 15:30",
+      "notes": "Location: Lokichoggio"
+    },
+    {
+      "id": 3,
+      "createdAt": "2026-04-06T12:45:01.339Z",
+      "status": "Confirmed",
+      "patientId": 1,
+      "patientName": "Zawadi Joshua ",
+      "patientEmail": "josh@gmail.com",
+      "provider": "Dr. Mary Wanjiru",
+      "service": "Dental Care",
+      "scheduledAt": "2026-04-13 16:00",
+      "notes": "Location: Kakuma Village"
+    },
+    {
+      "id": 4,
+      "createdAt": "2026-04-08T09:16:00.024Z",
+      "status": "Confirmed",
+      "patientId": 3,
+      "patientName": "Zawadi Joshua ",
+      "patientEmail": "josh@gmai.com",
+      "patientPhone": "0115099166",
+      "provider": "Dr. Mary Wanjiru",
+      "service": "Maternal Care",
+      "scheduledAt": "2026-04-13 14:45",
+      "notes": "Location: Lokichoggio"
+    }
+  ],
+  "records": []
+}

@@ -1,0 +1,8 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Ensure the root element is visible */
+#root {
+  min-height: 100vh;
+}
