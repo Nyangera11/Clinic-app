@@ -14,6 +14,7 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
+import { getApiUrl } from "../utils/api";
 
 export function HealthWorkerPortal() {
   const navigate = useNavigate();
@@ -95,11 +96,11 @@ export function HealthWorkerPortal() {
 
   const loadData = async () => {
     try {
-      const patientsRes = await fetch(`/api/patients?q=${encodeURIComponent(patientSearch)}`);
+      const patientsRes = await fetch(`${getApiUrl()}/api/patients?q=${encodeURIComponent(patientSearch)}`);
       if (patientsRes.ok) {
         setPatients(await patientsRes.json());
       }
-      const appointmentsRes = await fetch(`/api/appointments`);
+      const appointmentsRes = await fetch(`${getApiUrl()}/api/appointments`);
       if (appointmentsRes.ok) {
         setAppointments(await appointmentsRes.json());
       }
@@ -111,7 +112,7 @@ export function HealthWorkerPortal() {
   const handleNewPatient = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/patients', {
+      const res = await fetch(`${getApiUrl()}/api/patients`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPatientData),
@@ -136,7 +137,7 @@ export function HealthWorkerPortal() {
     setRecordSaving(true);
     try {
       const details = `Vitals: BP ${vitals.bloodPressure}, Temp ${vitals.temperature}, Glucose ${vitals.glucose}, SpO2 ${vitals.spo2}, HR ${vitals.heartRate}.`;
-      await fetch('/api/records', {
+      await fetch(`${getApiUrl()}/api/records`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,7 +170,7 @@ export function HealthWorkerPortal() {
     }
 
     try {
-      const response = await fetch('/api/appointments', {
+      const response = await fetch(`${getApiUrl()}/api/appointments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -209,7 +210,7 @@ export function HealthWorkerPortal() {
   const handlePatientSearch = async (value: string) => {
     setPatientSearch(value);
     try {
-      const patientsRes = await fetch(`/api/patients?q=${encodeURIComponent(value)}`);
+      const patientsRes = await fetch(`${getApiUrl()}/api/patients?q=${encodeURIComponent(value)}`);
       if (patientsRes.ok) {
         setPatients(await patientsRes.json());
       }

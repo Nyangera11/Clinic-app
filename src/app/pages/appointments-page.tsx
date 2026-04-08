@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Calendar, MapPin, Clock, Heart, ChevronLeft, Plus } from "lucide-react";
+import { getApiUrl } from "../utils/api";
 
 export function AppointmentsPage() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export function AppointmentsPage() {
 
   const loadAppointments = async (userEmail: string) => {
     try {
-      const response = await fetch(`/api/appointments?patientEmail=${encodeURIComponent(userEmail)}`);
+      const response = await fetch(`${getApiUrl()}/api/appointments?patientEmail=${encodeURIComponent(userEmail)}`);
       if (response.ok) {
         const data = await response.json();
         setUpcomingAppointments(data);
@@ -96,7 +97,7 @@ export function AppointmentsPage() {
 
       // Ensure patient exists in backend and fetch patientId
       let patientId: number | null = null;
-      const patientsResp = await fetch(`/api/patients?q=${encodeURIComponent(currentUser.email)}`);
+      const patientsResp = await fetch(`${getApiUrl()}/api/patients?q=${encodeURIComponent(currentUser.email)}`);
       if (patientsResp.ok) {
         const existingPatients = await patientsResp.json();
         if (existingPatients.length > 0) {
@@ -105,7 +106,7 @@ export function AppointmentsPage() {
       }
 
       if (!patientId) {
-        const createResp = await fetch('/api/patients', {
+        const createResp = await fetch(`${getApiUrl()}/api/patients`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -127,7 +128,7 @@ export function AppointmentsPage() {
         patientId = createdPatient.id;
       }
 
-      const response = await fetch('/api/appointments', {
+      const response = await fetch(`${getApiUrl()}/api/appointments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +170,7 @@ export function AppointmentsPage() {
     if (!confirm('Are you sure you want to cancel this appointment?')) return;
 
     try {
-      const res = await fetch(`/api/appointments/${appointmentId}/status`, {
+      const res = await fetch(`${getApiUrl()}/api/appointments/${appointmentId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Cancelled' }),
@@ -193,7 +194,7 @@ export function AppointmentsPage() {
     }
 
     try {
-      const res = await fetch(`/api/appointments/${reschedulingId}`, {
+      const res = await fetch(`${getApiUrl()}/api/appointments/${reschedulingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -411,7 +412,7 @@ export function AppointmentsPage() {
                     <button
                       onClick={async () => {
                         try {
-                          await fetch(`/api/reminders/test/${appointment.id}`, {
+                          await fetch(`${getApiUrl()}/api/reminders/test/${appointment.id}`, {
                             method: 'POST'
                           });
                           alert('Test reminder sent!');

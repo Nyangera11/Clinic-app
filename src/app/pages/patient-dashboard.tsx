@@ -13,6 +13,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { AIChatAssistant } from "../components/ai-chat-assistant";
+import { getApiUrl } from "../utils/api";
 
 export function PatientDashboard() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export function PatientDashboard() {
 
   const loadPatientData = async (user: any) => {
     try {
-      const appointmentsResp = await fetch(`/api/appointments?patientEmail=${encodeURIComponent(user.email)}`);
+      const appointmentsResp = await fetch(`${getApiUrl()}/api/appointments?patientEmail=${encodeURIComponent(user.email)}`);
       if (appointmentsResp.ok) {
         const appts = await appointmentsResp.json();
         setUpcomingAppointments(appts);
@@ -40,7 +41,7 @@ export function PatientDashboard() {
       }
 
       if (patientId !== null) {
-        const recordsResp = await fetch(`/api/records?patientId=${patientId}`);
+        const recordsResp = await fetch(`${getApiUrl()}/api/records?patientId=${patientId}`);
         if (recordsResp.ok) {
           const records = await recordsResp.json();
           setRecentRecords(records);
