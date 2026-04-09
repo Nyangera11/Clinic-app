@@ -305,6 +305,8 @@ export function HealthWorkerPortal() {
       service: apt.service || 'Unknown',
     }));
 
+  const filteredPatients = patients.filter(patient => appointments.some(apt => apt.patientEmail === patient.email && apt.provider === currentUser.name));
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -493,7 +495,7 @@ export function HealthWorkerPortal() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {patients.map((patient) => (
+                  {filteredPatients.map((patient) => (
                     <tr key={patient.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-gray-900">{`${patient.firstName} ${patient.lastName}`}</td>
                       <td className="px-4 py-3 text-gray-600">{patient.email}</td>
@@ -571,7 +573,7 @@ export function HealthWorkerPortal() {
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none"
               >
                 <option value="">Select a patient...</option>
-                {patients.map((patient) => (
+                {filteredPatients.map((patient) => (
                   <option key={patient.id} value={patient.id}>
                     {patient.firstName} {patient.lastName} - {patient.email}
                   </option>

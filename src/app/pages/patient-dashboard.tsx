@@ -22,6 +22,7 @@ export function PatientDashboard() {
   const [notifications, setNotifications] = useState<string[]>([]);
   const [upcomingAppointments, setUpcomingAppointments] = useState<any[]>([]);
   const [recentRecords, setRecentRecords] = useState<any[]>([]);
+  const [myDoctors, setMyDoctors] = useState<string[]>([]);
 
   const loadPatientData = async (user: any) => {
     try {
@@ -29,6 +30,7 @@ export function PatientDashboard() {
       if (appointmentsResp.ok) {
         const appts = await appointmentsResp.json();
         setUpcomingAppointments(appts);
+        setMyDoctors([...new Set(appts.map((apt: any) => apt.provider))]);
       }
 
       const patientsResp = await fetch(`/api/patients?q=${encodeURIComponent(user.email)}`);
@@ -254,6 +256,31 @@ export function PatientDashboard() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* My Doctors */}
+        <div className="mt-8 bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">My Doctors</h2>
+          {myDoctors.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {myDoctors.map((doctor, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-4 hover:border-green-600 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <User className="w-10 h-10 text-green-600" />
+                    <div>
+                      <h3 className="font-bold text-gray-900">{doctor}</h3>
+                      <p className="text-sm text-gray-600">Healthcare Provider</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <User className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600">No doctors assigned yet</p>
+            </div>
+          )}
         </div>
 
         {/* Health Tips */}
