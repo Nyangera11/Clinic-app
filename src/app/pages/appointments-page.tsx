@@ -3,6 +3,40 @@ import { useNavigate } from "react-router";
 import { Calendar, MapPin, Clock, Heart, ChevronLeft, Plus } from "lucide-react";
 import { getApiUrl } from "../utils/api";
 
+const services = [
+  "General Checkup",
+  "Vaccination",
+  "Laboratory Tests",
+  "Maternal Care",
+  "Dental Care",
+  "Pediatric Care",
+  "Mental Health Counseling",
+  "Chronic Disease Management",
+  "Nutrition Counseling",
+  "Antenatal Care",
+  "Eye Care",
+  "Dermatology",
+  "Cardiology",
+  "Orthopedics",
+  "Emergency Care",
+  "Physiotherapy",
+  "Radiology",
+  "Surgery",
+  "Oncology",
+  "Nephrology",
+];
+
+const providers = [
+  "Dr. Mary Wanjiru",
+  "Dr. John Mwangi",
+  "Dr. Amina Hassan",
+  "Dr. Grace Njoroge",
+  "Dr. Samuel Otieno",
+  "Nurse Esther Kamau",
+  "Clinical Officer Peter Ochieng",
+  "Any Available Clinician",
+];
+
 export function AppointmentsPage() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -280,19 +314,19 @@ export function AppointmentsPage() {
                   required
                 >
                   <option value="">Choose a service...</option>
-                  <option value="General Checkup">General Checkup</option>
-                  <option value="Vaccination">Vaccination</option>
-                  <option value="Laboratory Tests">Laboratory Tests</option>
-                  <option value="Maternal Care">Maternal Care</option>
-                  <option value="Dental Care">Dental Care</option>
+                  {services.map((service) => (
+                    <option key={service} value={service}>{service}</option>
+                  ))}
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Date & Location
+                  Choose Appointment Date
                 </label>
-                <select
+                <input
+                  type="date"
+                  min={new Date().toISOString().split("T")[0]}
                   value={newAppointment.date}
                   onChange={(e) => {
                     const chosenDate = e.target.value;
@@ -300,19 +334,13 @@ export function AppointmentsPage() {
                     setNewAppointment({
                       ...newAppointment,
                       date: chosenDate,
-                      location: schedule?.location || "",
+                      location: schedule?.location || newAppointment.location,
                     });
                   }}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
                   required
-                >
-                  <option value="">Choose a date...</option>
-                  {clinicSchedule.map((schedule, index) => (
-                    <option key={index} value={schedule.date}>
-                      {formatDisplayDate(schedule.date)} - {schedule.location} ({schedule.availableSlots} slots available)
-                    </option>
-                  ))}
-                </select>
+                />
+                <p className="text-xs text-gray-500 mt-2">Select a date from the calendar. If it matches a clinic stop, the location will auto-suggest.</p>
               </div>
 
               <div>
@@ -325,11 +353,10 @@ export function AppointmentsPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
                   required
                 >
-                  <option value="">Select doctor...</option>
-                  <option value="Dr. Mary Wanjiru">Dr. Mary Wanjiru</option>
-                  <option value="Dr. John Mwangi">Dr. John Mwangi</option>
-                  <option value="Dr. Amina Hassan">Dr. Amina Hassan</option>
-                  <option value="Any Available Clinician">Any Available Clinician</option>
+                  <option value="">Select clinician...</option>
+                  {providers.map((provider) => (
+                    <option key={provider} value={provider}>{provider}</option>
+                  ))}
                 </select>
               </div>
 
@@ -489,7 +516,9 @@ export function AppointmentsPage() {
             <form onSubmit={handleRescheduleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                <select
+                <input
+                  type="date"
+                  min={new Date().toISOString().split("T")[0]}
                   value={rescheduleForm.date}
                   onChange={(e) => {
                     const chosenDate = e.target.value;
@@ -500,14 +529,7 @@ export function AppointmentsPage() {
                   }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
                   required
-                >
-                  <option value="">Choose a date...</option>
-                  {clinicSchedule.map((schedule, idx) => (
-                    <option key={idx} value={schedule.date}>
-                      {schedule.date} - {schedule.location}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
 
               <div>

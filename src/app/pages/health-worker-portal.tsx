@@ -52,6 +52,41 @@ export function HealthWorkerPortal() {
     time: "",
   });
 
+  const services = [
+    "General Checkup",
+    "Vaccination",
+    "Laboratory Tests",
+    "Maternal Care",
+    "Dental Care",
+    "Pediatric Care",
+    "Mental Health Counseling",
+    "Chronic Disease Management",
+    "Nutrition Counseling",
+    "Antenatal Care",
+    "Eye Care",
+    "Dermatology",
+    "Cardiology",
+    "Orthopedics",
+    "Emergency Care",
+    "Physiotherapy",
+    "Radiology",
+    "Surgery",
+    "Oncology",
+    "Nephrology",
+  ];
+
+  const providers = [
+    "Dr. Mary Wanjiru",
+    "Dr. John Mwangi",
+    "Dr. Amina Hassan",
+    "Dr. Grace Njoroge",
+    "Dr. Samuel Otieno",
+    "Nurse Esther Kamau",
+    "Clinical Officer Peter Ochieng",
+    "Any Available Clinician",
+    ...(currentUser && currentUser.role === 'health_worker' ? [currentUser.name] : []),
+  ];
+
   const getFutureDate = (daysAhead: number) => {
     const date = new Date();
     date.setDate(date.getDate() + daysAhead);
@@ -205,6 +240,13 @@ export function HealthWorkerPortal() {
 
   const getPatientAppointments = (patientId: number) => {
     return appointments.filter((apt) => apt.patientId === patientId);
+  };
+
+  const getNextAppointment = (patientId: number) => {
+    const patientAppointments = getPatientAppointments(patientId)
+      .filter((apt) => new Date(apt.scheduledAt) >= new Date())
+      .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime());
+    return patientAppointments[0] || null;
   };
 
   const handlePatientSearch = async (value: string) => {
@@ -446,6 +488,7 @@ export function HealthWorkerPortal() {
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Village</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Registered</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Appointments</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
                   </tr>
                 </thead>
@@ -456,6 +499,25 @@ export function HealthWorkerPortal() {
                       <td className="px-4 py-3 text-gray-600">{patient.email}</td>
                       <td className="px-4 py-3 text-gray-600">{patient.village || 'N/A'}</td>
                       <td className="px-4 py-3 text-gray-600">{new Date(patient.createdAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {(() => {
+                          const nextAppointment = getNextAppointment(patient.id);
+                          const appointmentCount = getPatientAppointments(patient.id).length;
+                          return nextAppointment ? (
+                            <div className="space-y-1">
+                              <div className="font-medium text-gray-900">
+                                {new Date(nextAppointment.scheduledAt).toLocaleDateString()}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {new Date(nextAppointment.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {nextAppointment.provider || 'Any Clinician'}
+                              </div>
+                              <div className="text-xs text-gray-500">{appointmentCount} total</div>
+                            </div>
+                          ) : (
+                            <div className="text-gray-500">No upcoming appointments</div>
+                          );
+                        })()}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
                           <button
@@ -472,7 +534,7 @@ export function HealthWorkerPortal() {
                               setAppointmentPatient(patient);
                               setAppointmentData({
                                 service: '',
-                                date: clinicSchedule[0]?.date || '',
+                                date: '',
                                 location: clinicSchedule[0]?.location || '',
                                 provider: '',
                                 time: '',
@@ -495,20 +557,41 @@ export function HealthWorkerPortal() {
 
         {/* Capture Vitals Tab */}
         {activeTab === "vitals" && (
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Capture Patient Vitals</h2>
+          <div>
+            {/* Patient Selector */}
+            <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Select Patient for Vitals</h2>
+              <select
+                value={selectedPatient?.id || ""}
+                onChange={(e) => {
+                  const patientId = e.target.value;
+                  const patient = patients.find(p => p.id.toString() === patientId);
+                  setSelectedPatient(patient || null);
+                }}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none"
+              >
+                <option value="">Select a patient...</option>
+                {patients.map((patient) => (
+                  <option key={patient.id} value={patient.id}>
+                    {patient.firstName} {patient.lastName} - {patient.email}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              {selectedPatient && (
-                <div className="bg-green-50 p-4 rounded-lg mb-6">
-                  <h3 className="font-bold text-gray-900">{selectedPatient.name}</h3>
-                  <p className="text-sm text-gray-600">
-                    Age: {selectedPatient.age} | Village: {selectedPatient.village}
-                  </p>
-                </div>
-              )}
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Capture Patient Vitals</h2>
+                {selectedPatient ? (
+                  <div>
+                    <div className="bg-green-50 p-4 rounded-lg mb-6">
+                      <h3 className="font-bold text-gray-900">{selectedPatient.name}</h3>
+                      <p className="text-sm text-gray-600">
+                        Age: {selectedPatient.age} | Village: {selectedPatient.village}
+                      </p>
+                    </div>
 
-              <div className="space-y-4">
+                    <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Blood Pressure (mmHg)
@@ -595,54 +678,62 @@ export function HealthWorkerPortal() {
                 >
                   Get AI Diagnosis
                 </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-gray-600">Please select a patient above to capture their vitals.</p>
+                  </div>
+                )}
               </div>
-            </div>
 
-            {/* AI Diagnosis Results */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">AI Diagnosis Results</h2>
-
-              {aiDiagnosis ? (
+              {/* AI Diagnosis Results */}
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">AI Diagnosis Results</h2>
                 <div>
-                  <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-lg mb-6">
-                    <h3 className="font-bold text-blue-900 mb-2">Preliminary Assessment</h3>
-                    <p className="text-blue-800">{aiDiagnosis}</p>
-                  </div>
+                  {aiDiagnosis ? (
+                    <div>
+                      <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-lg mb-6">
+                        <h3 className="font-bold text-blue-900 mb-2">Preliminary Assessment</h3>
+                        <p className="text-blue-800">{aiDiagnosis}</p>
+                      </div>
 
-                  <div className="space-y-3">
-                    <h3 className="font-bold text-gray-900">Recommendations:</h3>
-                    <ul className="space-y-2 text-gray-700">
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 mt-1">✓</span>
-                        <span>Continue regular monitoring of vitals</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 mt-1">✓</span>
-                        <span>Schedule follow-up visit in 2 weeks</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 mt-1">✓</span>
-                        <span>Maintain healthy diet and exercise</span>
-                      </li>
-                    </ul>
-                  </div>
+                      <div className="space-y-3">
+                        <h3 className="font-bold text-gray-900">Recommendations:</h3>
+                        <ul className="space-y-2 text-gray-700">
+                          <li className="flex items-start gap-2">
+                            <span className="text-green-600 mt-1">✓</span>
+                            <span>Continue regular monitoring of vitals</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-green-600 mt-1">✓</span>
+                            <span>Schedule follow-up visit in 2 weeks</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-green-600 mt-1">✓</span>
+                            <span>Maintain healthy diet and exercise</span>
+                          </li>
+                        </ul>
+                      </div>
 
-                  <button
-                    onClick={handleSaveRecord}
-                    disabled={recordSaving}
-                    className={`w-full mt-6 py-3 rounded-lg font-semibold transition-colors ${recordSaving ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-                  >
-                    {recordSaving ? 'Saving...' : 'Save to Patient Record'}
-                  </button>
+                      <button
+                        onClick={handleSaveRecord}
+                        disabled={recordSaving}
+                        className={`w-full mt-6 py-3 rounded-lg font-semibold transition-colors ${recordSaving ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                      >
+                        {recordSaving ? 'Saving...' : 'Save to Patient Record'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Stethoscope className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-600">
+                        Enter patient vitals and click "Get AI Diagnosis" to see results
+                      </p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Stethoscope className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">
-                    Enter patient vitals and click "Get AI Diagnosis" to see results
-                  </p>
-                </div>
-              )}
+              </div>
             </div>
           </div>
         )}
@@ -675,16 +766,16 @@ export function HealthWorkerPortal() {
                       required
                     >
                       <option value="">Select service</option>
-                      <option value="General Checkup">General Checkup</option>
-                      <option value="Vaccination">Vaccination</option>
-                      <option value="Laboratory Tests">Laboratory Tests</option>
-                      <option value="Maternal Care">Maternal Care</option>
-                      <option value="Dental Care">Dental Care</option>
+                      {services.map((service) => (
+                        <option key={service} value={service}>{service}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                    <select
+                    <input
+                      type="date"
+                      min={new Date().toISOString().split("T")[0]}
                       value={appointmentData.date}
                       onChange={(e) => {
                         const chosenDate = e.target.value;
@@ -697,14 +788,8 @@ export function HealthWorkerPortal() {
                       }}
                       className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none"
                       required
-                    >
-                      <option value="">Choose a date</option>
-                      {clinicSchedule.map((schedule) => (
-                        <option key={schedule.date} value={schedule.date}>
-                          {formatDisplayDate(schedule.date)} - {schedule.location}
-                        </option>
-                      ))}
-                    </select>
+                    />
+                    <p className="text-xs text-gray-500 mt-2">Choose a date from the calendar; matching mobile clinic days will suggest a location.</p>
                   </div>
                 </div>
 
@@ -729,10 +814,9 @@ export function HealthWorkerPortal() {
                       required
                     >
                       <option value="">Select clinician</option>
-                      <option value="Dr. Mary Wanjiru">Dr. Mary Wanjiru</option>
-                      <option value="Dr. John Mwangi">Dr. John Mwangi</option>
-                      <option value="Dr. Amina Hassan">Dr. Amina Hassan</option>
-                      <option value="Any Available Clinician">Any Available Clinician</option>
+                      {providers.map((provider) => (
+                        <option key={provider} value={provider}>{provider}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
