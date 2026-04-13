@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Calendar, MapPin, Clock, Heart, ChevronLeft, Plus } from "lucide-react";
-import { getApiUrl } from "../utils/api";
+import { apiCall, getApiUrl } from "../utils/api";
 
 const services = [
   "General Checkup",
@@ -37,10 +37,19 @@ const providers = [
   "Any Available Clinician",
 ];
 
+const locations = [
+  "Kakuma Village",
+  "Lodwar Town",
+  "Lokichoggio",
+  "Turkana Central",
+  "Kajiado North",
+];
+
 export function AppointmentsPage() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [showBooking, setShowBooking] = useState(false);
+  const [doctors, setDoctors] = useState<any[]>([]);
   const [newAppointment, setNewAppointment] = useState({
     service: "",
     date: "",
@@ -79,9 +88,21 @@ export function AppointmentsPage() {
     { date: getFutureDate(7), location: "Kakuma Village", availableSlots: 6 },
   ];
 
+  const loadDoctors = async () => {
+    try {
+      const response = await fetch(`${getApiUrl()}/api/users/doctors`);
+      if (response.ok) {
+        const data = await response.json();
+        setDoctors(data);
+      }
+    } catch (error) {
+      console.error('Error loading doctors', error);
+    }
+  };
+
   const loadAppointments = async (userEmail: string) => {
     try {
-      const response = await fetch(`${getApiUrl()}/api/appointments?patientEmail=${encodeURIComponent(userEmail)}`);
+      const response = await apiCall(`/api/appointments?patientEmail=${encodeURIComponent(userEmail)}`);
       if (response.ok) {
         const data = await response.json();
         setUpcomingAppointments(data);
@@ -104,6 +125,7 @@ export function AppointmentsPage() {
     }
     setCurrentUser(parsed);
     loadAppointments(parsed.email);
+    loadDoctors();
   }, [navigate]);
 
   const pastAppointments = upcomingAppointments.filter((appointment) => new Date(appointment.scheduledAt) < new Date());
@@ -131,7 +153,7 @@ export function AppointmentsPage() {
 
       // Ensure patient exists in backend and fetch patientId
       let patientId: number | null = null;
-      const patientsResp = await fetch(`${getApiUrl()}/api/patients?q=${encodeURIComponent(currentUser.email)}`);
+      const patientsResp = await apiCall(`/api/patients?q=${encodeURIComponent(currentUser.email)}`);
       if (patientsResp.ok) {
         const existingPatients = await patientsResp.json();
         if (existingPatients.length > 0) {
@@ -140,9 +162,8 @@ export function AppointmentsPage() {
       }
 
       if (!patientId) {
-        const createResp = await fetch(`${getApiUrl()}/api/patients`, {
+        const createResp = await apiCall('/api/patients', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             firstName,
             lastName,
@@ -162,11 +183,8 @@ export function AppointmentsPage() {
         patientId = createdPatient.id;
       }
 
-      const response = await fetch(`${getApiUrl()}/api/appointments`, {
+      const response = await apiCall('/api/appointments', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           patientId,
           patientName: currentUser.name,
@@ -204,9 +222,8 @@ export function AppointmentsPage() {
     if (!confirm('Are you sure you want to cancel this appointment?')) return;
 
     try {
-      const res = await fetch(`${getApiUrl()}/api/appointments/${appointmentId}/status`, {
+      const res = await apiCall(`/api/appointments/${appointmentId}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Cancelled' }),
       });
 
@@ -228,9 +245,8 @@ export function AppointmentsPage() {
     }
 
     try {
-      const res = await fetch(`${getApiUrl()}/api/appointments/${reschedulingId}`, {
+      const res = await apiCall(`/api/appointments/${reschedulingId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           provider: rescheduleForm.provider,
           scheduledAt: `${rescheduleForm.date} ${rescheduleForm.time}`,
@@ -345,6 +361,24 @@ export function AppointmentsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Choose Location
+                </label>
+                <select
+                  value={newAppointment.location}
+                  onChange={(e) => setNewAppointment({ ...newAppointment, location: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                  required
+                >
+                  <option value="">Select location...</option>
+                  {locations.map((location) => (
+                    <option key={location} value={location}>{location}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 mt-2">Choose a North Kenya clinic location for your appointment.</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Choose Provider
                 </label>
                 <select
@@ -354,9 +388,13 @@ export function AppointmentsPage() {
                   required
                 >
                   <option value="">Select clinician...</option>
-                  {providers.map((provider) => (
-                    <option key={provider} value={provider}>{provider}</option>
-                  ))}
+                  {doctors.length > 0 ? (
+                    doctors.map((doctor) => (
+                      <option key={doctor.id} value={doctor.name}>{doctor.name}</option>
+                    ))
+                  ) : (
+                    <option disabled>Loading clinicians...</option>
+                  )}
                 </select>
               </div>
 
@@ -439,7 +477,7 @@ export function AppointmentsPage() {
                     <button
                       onClick={async () => {
                         try {
-                          await fetch(`${getApiUrl()}/api/reminders/test/${appointment.id}`, {
+                          await apiCall(`/api/reminders/test/${appointment.id}`, {
                             method: 'POST'
                           });
                           alert('Test reminder sent!');

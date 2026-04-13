@@ -1,35 +1,36 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import routes from './routes.js';
-import reminderService from './reminder-service.js';
+import morgan from 'morgan';
+import routes from './src/routes/index.js';
+import { initDb } from './src/config/db.js';
+import { errorHandler } from './src/middleware/error.middleware.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './src/swagger.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const app = express();
 const PORT = process.env.PORT || 4000;
+const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(morgan('combined'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api', routes);
 
-// Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, '../dist')));
-
-// Handle client-side routing - send all non-API requests to React app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'Mobile Health Clinic API' });
 });
 
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
+app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Clinic backend listening on http://localhost:${PORT}`);
-  // Start the reminder service
-  reminderService.start();
-});
+initDb()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Clinic backend listening on http://localhost:${PORT}`);
+      console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+    });
+  })
+  .catch((error) => {
+    console.error('Database initialization failed', error);
+    process.exit(1);
+  });

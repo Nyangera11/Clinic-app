@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Heart, Lock, Mail, User, UserCircle, Phone } from "lucide-react";
+import { getApiUrl } from "../utils/api";
 
 type UserRole = "patient" | "health_worker" | "admin";
 
@@ -28,43 +29,59 @@ export function LoginPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     seedDefaultUsers();
 
-    // Store user data in localStorage (simulating backend)
-    let userToStore = { ...formData };
-
     if (isSignUp) {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      if (users.some((u: any) => u.email === formData.email)) {
-        alert("An account with this email already exists");
-        return;
+      try {
+        const response = await fetch(`${getApiUrl()}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name: formData.name, 
+            email: formData.email, 
+            password: formData.password, 
+            phone: formData.phone,
+            role: formData.role 
+          }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert("Account created successfully! Please log in.");
+          setIsSignUp(false);
+          setFormData({ name: "", email: "", password: "", phone: "", role: "patient" });
+        } else {
+          alert(data.error || 'Registration failed');
+        }
+      } catch (error) {
+        alert('Registration error: Unable to connect to server');
       }
-      users.push(formData);
-      localStorage.setItem("users", JSON.stringify(users));
     } else {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find(
-        (u: any) => u.email === formData.email && u.password === formData.password
-      );
-      if (!user) {
-        alert("Invalid email or password. If new, please register first.");
-        return;
+      try {
+        const response = await fetch(`${getApiUrl()}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, password: formData.password }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('currentUser', JSON.stringify(data.user));
+          // Navigate based on role
+          if (data.user.role === "patient") {
+            navigate("/patient-dashboard");
+          } else if (data.user.role === "health_worker") {
+            navigate("/health-worker-dashboard");
+          } else if (data.user.role === "admin") {
+            navigate("/admin");
+          }
+        } else {
+          alert(data.error || 'Login failed');
+        }
+      } catch (error) {
+        alert('Login error');
       }
-      userToStore = { name: user.name, email: user.email, role: user.role, phone: user.phone, password: user.password };
-    }
-
-    // Store current user
-    localStorage.setItem("currentUser", JSON.stringify(userToStore));
-
-    // Navigate based on role
-    if (userToStore.role === "patient") {
-      navigate("/patient-dashboard");
-    } else if (userToStore.role === "health_worker") {
-      navigate("/health-worker");
-    } else if (userToStore.role === "admin") {
-      navigate("/admin");
     }
   };
 

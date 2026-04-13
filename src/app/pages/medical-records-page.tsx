@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { FileText, ChevronLeft, Heart, Download, Eye } from "lucide-react";
+import { apiCall } from "../utils/api";
 
 export function MedicalRecordsPage() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [medicalRecords, setMedicalRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
 
   useEffect(() => {
@@ -13,10 +16,62 @@ export function MedicalRecordsPage() {
       navigate("/login");
       return;
     }
-    setCurrentUser(JSON.parse(user));
+    const parsed = JSON.parse(user);
+    if (parsed.role !== "patient") {
+      navigate("/patient-dashboard");
+      return;
+    }
+    setCurrentUser(parsed);
   }, [navigate]);
 
-  const medicalRecords = [
+  useEffect(() => {
+    if (currentUser) {
+      loadMedicalRecords();
+    }
+  }, [currentUser]);
+
+  const loadMedicalRecords = async () => {
+    try {
+      setLoading(true);
+      // Get patient's user ID by email from users endpoint
+      const userResponse = await apiCall(`/api/users?email=${currentUser.email}`);
+      if (!userResponse.ok) {
+        console.error("Failed to fetch user");
+        setLoading(false);
+        return;
+      }
+
+      const users = await userResponse.json();
+      let userId = currentUser.id;
+      
+      if (Array.isArray(users) && users.length > 0) {
+        userId = users[0].id;
+      }
+
+      // Get medical records
+      const recordsResponse = await apiCall(`/api/records/${userId}`);
+      if (recordsResponse.ok) {
+        const records = await recordsResponse.json();
+        setMedicalRecords(records || []);
+      }
+    } catch (error) {
+      console.error("Error loading medical records:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  if (!currentUser) return null;
+
+  const displayRecords = medicalRecords.length > 0 ? medicalRecords : [
     {
       id: 1,
       date: "February 28, 2026",
@@ -29,47 +84,9 @@ export function MedicalRecordsPage() {
         temperature: "36.5°C",
         weight: "68 kg",
       },
-      prescription: "No medication prescribed",
       notes: "Patient tolerated vaccine well. Advised to monitor for any adverse reactions.",
     },
-    {
-      id: 2,
-      date: "January 15, 2026",
-      service: "General Checkup",
-      provider: "CHW John Ekiru",
-      diagnosis: "Routine Health Assessment",
-      treatment: "General health counseling provided",
-      vitals: {
-        bloodPressure: "118/78 mmHg",
-        temperature: "36.8°C",
-        weight: "67 kg",
-        heartRate: "72 bpm",
-        spo2: "98%",
-      },
-      prescription: "Multivitamin supplements recommended",
-      notes: "Patient in good general health. Continue healthy lifestyle practices.",
-    },
-    {
-      id: 3,
-      date: "December 10, 2025",
-      service: "Laboratory Tests",
-      provider: "Lab Technician Sarah Arot",
-      diagnosis: "Annual health screening",
-      treatment: "Blood work completed",
-      vitals: {
-        bloodPressure: "122/82 mmHg",
-      },
-      labResults: {
-        bloodSugar: "92 mg/dL (Normal)",
-        cholesterol: "180 mg/dL (Normal)",
-        hemoglobin: "13.5 g/dL (Normal)",
-      },
-      prescription: "None",
-      notes: "All lab results within normal range. Maintain current lifestyle.",
-    },
   ];
-
-  if (!currentUser) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -105,32 +122,44 @@ export function MedicalRecordsPage() {
         {!selectedRecord ? (
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Record History</h2>
-            <div className="space-y-4">
-              {medicalRecords.map((record) => (
-                <div
-                  key={record.id}
-                  className="border border-gray-200 rounded-lg p-6 hover:border-green-600 transition-colors cursor-pointer"
-                  onClick={() => setSelectedRecord(record)}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900">{record.service}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{record.date}</p>
-                      <p className="text-sm text-gray-600">Provider: {record.provider}</p>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                <p className="mt-4 text-gray-600">Loading medical records...</p>
+              </div>
+            ) : displayRecords.length === 0 ? (
+              <div className="text-center py-12">
+                <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-600 text-lg">No medical records yet</p>
+                <p className="text-gray-500 text-sm mt-2">Your medical records from attended appointments will appear here</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {displayRecords.map((record) => (
+                  <div
+                    key={record.id}
+                    className="border border-gray-200 rounded-lg p-6 hover:border-green-600 transition-colors cursor-pointer"
+                    onClick={() => setSelectedRecord(record)}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">{record.diagnosis}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{formatDate(record.createdAt || record.date)}</p>
+                      </div>
+                      <button className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium">
+                        <Eye className="w-5 h-5" />
+                        View Details
+                      </button>
                     </div>
-                    <button className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium">
-                      <Eye className="w-5 h-5" />
-                      View Details
-                    </button>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        <span className="font-medium">Treatment:</span> {record.treatment}
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-700">
-                      <span className="font-medium">Diagnosis:</span> {record.diagnosis}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           /* Detailed Record View */

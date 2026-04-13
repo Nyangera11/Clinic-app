@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "id": 2,
+      "name": "Demo Patient",
+      "email": "patient@clinic.test",
+      "passwordHash": "$2a$10$a0SJ0LqwZCm.t3jxoEBUy.D9aj.C08pQcleNRp8hWLXvS9l0m3rri",
+      "role": "patient",
+      "createdAt": "2026-04-09T12:24:19.990Z"
+    }
+  ],
+  "patients": [],
+  "appointments": [],
+  "vitals": [],
+  "ai_results": [],
+  "medical_records": []
+}

@@ -4,6 +4,12 @@ export const getApiUrl = () => {
 };
 
 export const apiCall = async (endpoint: string, options?: RequestInit) => {
+  const token = localStorage.getItem('authToken');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options?.headers,
+  };
   const url = `${getApiUrl()}${endpoint}`;
-  return fetch(url, options);
+  return fetch(url, { ...options, headers });
 };

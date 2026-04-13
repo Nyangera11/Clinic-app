@@ -3,6 +3,7 @@ import { LandingPage } from "./pages/landing-page";
 import { LoginPage } from "./pages/login-page";
 import { PatientDashboard } from "./pages/patient-dashboard";
 import { HealthWorkerPortal } from "./pages/health-worker-portal";
+import { HealthWorkerDashboard } from "./pages/health-worker-dashboard";
 import { AdminDashboard } from "./pages/admin-dashboard";
 import { AppointmentsPage } from "./pages/appointments-page";
 import { MedicalRecordsPage } from "./pages/medical-records-page";
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
   {
     path: "/health-worker",
     Component: HealthWorkerPortal,
+  },
+  {
+    path: "/health-worker-dashboard",
+    Component: HealthWorkerDashboard,
   },
   {
     path: "/admin",

@@ -1,4 +1,58 @@
 {
+  "users": [
+    {
+      "id": 2,
+      "name": "Eugene Adera",
+      "email": "eugene@gmail.com",
+      "passwordHash": "$2a$10$7HkZzRGhLeupKtIeGOZy/..6c3BETbpStjm89d59Y..UBW4gYNdKm",
+      "role": "patient",
+      "createdAt": "2026-04-10T09:03:21.158Z"
+    },
+    {
+      "id": 3,
+      "name": "Dr. Zawadi Nyang;era",
+      "email": "zawadi@gmail.com",
+      "passwordHash": "$2a$10$KmDyC85nXAocYsuEPojYUePVQXQ/FYcrqa5V9Oe8FFQ4bZW2/smbO",
+      "role": "health_worker",
+      "createdAt": "2026-04-10T12:22:39.190Z"
+    },
+    {
+      "id": 4,
+      "name": "Dan Osoro",
+      "email": "dan@gmail.com",
+      "passwordHash": "$2a$10$e5X3F0NGGvkKgwd4nx96ieDnqGOL7xY6Jp5.z1Fv0Hn1q4lEKjFv6",
+      "phone": "0115099166",
+      "role": "patient",
+      "createdAt": "2026-04-13T08:39:01.718Z"
+    },
+    {
+      "id": 5,
+      "name": "Dr. Grace",
+      "email": "grace@gmail.com",
+      "passwordHash": "$2a$10$QUpdmlb.VVvnGxi3nRUeouzX.7niZZ7tO9lTNKNJJ8XjEmjibSmyK",
+      "phone": "0723326745",
+      "role": "health_worker",
+      "createdAt": "2026-04-13T08:50:56.262Z"
+    },
+    {
+      "id": 6,
+      "name": "Karen Kwamboka",
+      "email": "karen@gmail.com",
+      "passwordHash": "$2a$10$AZkmJ.MZAa9vh8d3WSpjhe/6tQJiUUncSXGkBlAiyXum0jDHqyU.q",
+      "phone": "0747829473",
+      "role": "patient",
+      "createdAt": "2026-04-13T08:51:41.351Z"
+    },
+    {
+      "id": 7,
+      "name": "Joshua Nyasae",
+      "email": "josh@gmail.com",
+      "passwordHash": "$2a$10$7BYiONpbYAKk5.CM/WRKR.c2xqKEnPAP0zR5Nlf00e41geYWXdeIm",
+      "phone": "0700347654",
+      "role": "patient",
+      "createdAt": "2026-04-13T08:57:01.574Z"
+    }
+  ],
   "patients": [
     {
       "id": 1,
@@ -32,6 +86,69 @@
       "dateOfBirth": null,
       "village": "Unknown",
       "status": "Active"
+    },
+    {
+      "id": 4,
+      "name": "Eugene Adera",
+      "DOB": "1990-01-01",
+      "gender": "other",
+      "location": "Unknown",
+      "contact": "",
+      "createdAt": "2026-04-10T11:36:07.529Z"
+    },
+    {
+      "id": 5,
+      "name": "Eugene Adera",
+      "DOB": "1990-01-01",
+      "gender": "other",
+      "location": "Unknown",
+      "contact": "",
+      "createdAt": "2026-04-10T11:36:30.639Z"
+    },
+    {
+      "id": 6,
+      "name": "Eugene Adera",
+      "DOB": "1990-01-01",
+      "gender": "other",
+      "location": "Unknown",
+      "contact": "",
+      "createdAt": "2026-04-10T11:58:20.120Z"
+    },
+    {
+      "id": 7,
+      "name": "Eugene Adera",
+      "DOB": "1990-01-01",
+      "gender": "other",
+      "location": "Unknown",
+      "contact": "",
+      "createdAt": "2026-04-10T12:23:50.744Z"
+    },
+    {
+      "id": 8,
+      "name": "Gideon Masaku",
+      "DOB": "2006-04-11",
+      "gender": "male",
+      "location": "Lodwar",
+      "contact": "0700000056",
+      "createdAt": "2026-04-10T13:16:50.344Z"
+    },
+    {
+      "id": 9,
+      "name": "Dan Osoro",
+      "DOB": "1990-01-01",
+      "gender": "other",
+      "location": "Unknown",
+      "contact": "0115099166",
+      "createdAt": "2026-04-13T08:39:47.422Z"
+    },
+    {
+      "id": 10,
+      "name": "Karen Kwamboka",
+      "DOB": "1990-01-01",
+      "gender": "other",
+      "location": "Unknown",
+      "contact": "0747829473",
+      "createdAt": "2026-04-13T08:52:31.154Z"
     }
   ],
   "appointments": [
@@ -81,6 +198,239 @@
       "service": "Maternal Care",
       "scheduledAt": "2026-04-13 14:45",
       "notes": "Location: Lokichoggio"
+    },
+    {
+      "id": 5,
+      "patientId": 6,
+      "patientName": "Eugene Adera",
+      "patientEmail": "eugene@gmail.com",
+      "provider": "Dr. Samuel Otieno",
+      "service": "Maternal Care",
+      "scheduledAt": "2026-04-29 15:30",
+      "status": "Confirmed",
+      "notes": "Location: Lodwar Town",
+      "createdAt": "2026-04-10T11:58:20.164Z"
+    },
+    {
+      "id": 6,
+      "patientId": 7,
+      "patientName": "Eugene Adera",
+      "patientEmail": "eugene@gmail.com",
+      "provider": "Dr. Zawadi Nyang;era",
+      "service": "Eye Care",
+      "scheduledAt": "2026-04-13 14:55",
+      "status": "Attended",
+      "notes": "Location: Lodwar Town",
+      "createdAt": "2026-04-10T12:23:50.800Z"
+    },
+    {
+      "id": 7,
+      "patientId": 9,
+      "patientName": "Dan Osoro",
+      "patientEmail": "dan@gmail.com",
+      "patientPhone": "0115099166",
+      "provider": "Dr. Zawadi Nyang;era",
+      "service": "Surgery",
+      "scheduledAt": "2026-04-17 10:00",
+      "status": "Confirmed",
+      "notes": "Location: Lokichoggio",
+      "createdAt": "2026-04-13T08:39:47.460Z"
+    }
+  ],
+  "vitals": [],
+  "ai_results": [
+    {
+      "id": 2,
+      "patient_id": 5,
+      "symptoms": "Headache",
+      "prediction": "Low risk presentation",
+      "riskLevel": "low",
+      "recommendation": "Continue standard care and monitor symptoms over the next few days.",
+      "synced": 0,
+      "createdAt": "2026-04-10T13:16:11.088Z"
+    },
+    {
+      "id": 3,
+      "patient_id": 9,
+      "symptoms": "Headache\nVomit \nJoint Pins",
+      "prediction": "Low risk presentation",
+      "riskLevel": "low",
+      "recommendation": "Continue standard care and monitor symptoms over the next few days.",
+      "synced": 0,
+      "createdAt": "2026-04-13T08:41:21.905Z"
+    },
+    {
+      "id": 4,
+      "patient_id": 9,
+      "symptoms": "Headache\nCoughs \nVomit",
+      "prediction": "Low risk presentation",
+      "riskLevel": "low",
+      "recommendation": "Continue standard care and monitor symptoms over the next few days.",
+      "synced": 0,
+      "createdAt": "2026-04-13T08:45:54.566Z"
+    },
+    {
+      "id": 5,
+      "patient_id": 10,
+      "symptoms": "Headache\nLoss of appetite \nTired\nFever",
+      "prediction": "Low risk presentation",
+      "riskLevel": "low",
+      "recommendation": "Continue standard care and monitor symptoms over the next few days.",
+      "synced": 0,
+      "createdAt": "2026-04-13T08:53:57.249Z"
+    },
+    {
+      "id": 6,
+      "patient_id": 10,
+      "symptoms": "Fever\nheadache\ntired \nvomit",
+      "prediction": "Low risk presentation",
+      "riskLevel": "low",
+      "recommendation": "Continue standard care and monitor symptoms over the next few days.",
+      "synced": 0,
+      "createdAt": "2026-04-13T08:55:19.172Z"
+    },
+    {
+      "id": 7,
+      "patient_id": 10,
+      "symptoms": "headache \nvomit \nloss of appetite",
+      "prediction": "Low risk presentation",
+      "riskLevel": "low",
+      "recommendation": "Continue standard care and monitor symptoms over the next few days.",
+      "synced": 0,
+      "createdAt": "2026-04-13T08:55:57.276Z"
+    }
+  ],
+  "medical_records": [
+    {
+      "id": 2,
+      "patient_id": 7,
+      "diagnosis": "Eye Care",
+      "treatment": "Take Brufen",
+      "notes": null,
+      "createdAt": "2026-04-10T13:03:51.508Z"
+    },
+    {
+      "id": 3,
+      "patient_id": 10,
+      "diagnosis": "Emergency Care",
+      "treatment": "Rest advised ",
+      "notes": null,
+      "createdAt": "2026-04-13T08:54:34.796Z"
+    }
+  ],
+  "prescriptions": [],
+  "notifications": [
+    {
+      "id": 2,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your appointment with Dr. Zawadi Nyang;era for Surgery has been scheduled for 4/17/2026, 10:00:00 AM. You will receive a reminder 24 hours before the appointment.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:39:47.489Z"
+    },
+    {
+      "id": 3,
+      "type": "EMAIL",
+      "recipient": "dan@gmail.com",
+      "message": "Appointment Confirmation: Your appointment with Dr. Zawadi Nyang;era for Surgery has been scheduled for 4/17/2026, 10:00:00 AM. You will receive a reminder 24 hours before the appointment.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:39:47.496Z"
+    },
+    {
+      "id": 4,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:45:55.828Z"
+    },
+    {
+      "id": 5,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:45:56.498Z"
+    },
+    {
+      "id": 6,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:45:58.101Z"
+    },
+    {
+      "id": 7,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:45:59.375Z"
+    },
+    {
+      "id": 8,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:46:08.164Z"
+    },
+    {
+      "id": 9,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:46:08.776Z"
+    },
+    {
+      "id": 10,
+      "type": "SMS",
+      "recipient": "0747829473",
+      "message": "Your appointment with Dr. Grace for Emergency Care has been scheduled for 4/21/2026, 11:30:00 AM. You will receive a reminder 24 hours before the appointment.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:52:31.185Z"
+    },
+    {
+      "id": 11,
+      "type": "EMAIL",
+      "recipient": "karen@gmail.com",
+      "message": "Appointment Confirmation: Your appointment with Dr. Grace for Emergency Care has been scheduled for 4/21/2026, 11:30:00 AM. You will receive a reminder 24 hours before the appointment.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:52:31.188Z"
+    },
+    {
+      "id": 12,
+      "type": "SMS",
+      "recipient": "0747829473",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:54:03.628Z"
+    },
+    {
+      "id": 13,
+      "type": "SMS",
+      "recipient": "0747829473",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:55:20.984Z"
+    },
+    {
+      "id": 14,
+      "type": "SMS",
+      "recipient": "0747829473",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:55:59.075Z"
+    },
+    {
+      "id": 15,
+      "type": "SMS",
+      "recipient": "0747829473",
+      "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
+      "status": "sent",
+      "createdAt": "2026-04-13T08:56:00.018Z"
     }
   ],
   "records": []
