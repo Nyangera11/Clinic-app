@@ -158,6 +158,24 @@
       "location": "Unknown",
       "contact": "0747829473",
       "createdAt": "2026-04-13T08:52:31.154Z"
+    },
+    {
+      "id": 11,
+      "name": "Eugene Kibe ",
+      "DOB": "2006-02-06",
+      "gender": "male",
+      "location": "Lodwar",
+      "contact": "0783323475",
+      "createdAt": "2026-04-17T07:16:08.984Z"
+    },
+    {
+      "id": 12,
+      "name": "Dan Osoro",
+      "DOB": "1990-01-01",
+      "gender": "other",
+      "location": "Unknown",
+      "contact": "0115099166",
+      "createdAt": "2026-04-17T07:17:28.049Z"
     }
   ],
   "appointments": [
@@ -244,6 +262,19 @@
       "status": "Confirmed",
       "notes": "Location: Lokichoggio",
       "createdAt": "2026-04-13T08:39:47.460Z"
+    },
+    {
+      "id": 8,
+      "patientId": 12,
+      "patientName": "Dan Osoro",
+      "patientEmail": "dan@gmail.com",
+      "patientPhone": "0115099166",
+      "provider": "Dr. Ken Mugo",
+      "service": "Dental Care",
+      "scheduledAt": "2026-04-22 15:40",
+      "status": "Confirmed",
+      "notes": "Location: Lokichoggio",
+      "createdAt": "2026-04-17T07:17:28.087Z"
     }
   ],
   "vitals": [],
@@ -440,6 +471,22 @@
       "message": "Your prescription for Low risk presentation is ready. Medications: . Please collect from the pharmacy. Follow all instructions carefully.",
       "status": "sent",
       "createdAt": "2026-04-13T08:56:00.018Z"
+    },
+    {
+      "id": 16,
+      "type": "SMS",
+      "recipient": "0115099166",
+      "message": "Your appointment with Dr. Ken Mugo for Dental Care has been scheduled for 4/22/2026, 3:40:00 PM. You will receive a reminder 24 hours before the appointment.",
+      "status": "sent",
+      "createdAt": "2026-04-17T07:17:28.118Z"
+    },
+    {
+      "id": 17,
+      "type": "EMAIL",
+      "recipient": "dan@gmail.com",
+      "message": "Appointment Confirmation: Your appointment with Dr. Ken Mugo for Dental Care has been scheduled for 4/22/2026, 3:40:00 PM. You will receive a reminder 24 hours before the appointment.",
+      "status": "sent",
+      "createdAt": "2026-04-17T07:17:28.124Z"
     }
   ],
   "records": []
