@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Heart, Lock, Mail, User, UserCircle, Phone, Moon, Sun } from "lucide-react";
+import { Heart, Lock, Mail, User, UserCircle, Phone, Moon, Sun, Eye, EyeOff } from "lucide-react";
 import { getApiUrl } from "../utils/api";
 import { useDarkMode } from "../context/DarkModeContext";
 
@@ -11,10 +11,13 @@ export function LoginPage() {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     phone: "",
     role: "patient" as UserRole,
   });
@@ -36,6 +39,15 @@ export function LoginPage() {
     seedDefaultUsers();
 
     if (isSignUp) {
+      // Validate passwords match
+      if (formData.password !== formData.confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+      if (formData.password.length < 6) {
+        alert("Password must be at least 6 characters long");
+        return;
+      }
       try {
         const response = await fetch(`${getApiUrl()}/api/auth/register`, {
           method: 'POST',
@@ -52,7 +64,7 @@ export function LoginPage() {
         if (response.ok) {
           alert("Account created successfully! Please log in.");
           setIsSignUp(false);
-          setFormData({ name: "", email: "", password: "", phone: "", role: "patient" });
+          setFormData({ name: "", email: "", password: "", confirmPassword: "", phone: "", role: "patient" });
         } else {
           alert(data.error || 'Registration failed');
         }
@@ -265,15 +277,59 @@ export function LoginPage() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                   placeholder="••••••••"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
               </div>
             </div>
+
+            {isSignUp && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                  <p className="text-red-500 dark:text-red-400 text-sm mt-1">Passwords do not match</p>
+                )}
+              </div>
+            )}
 
             {!isSignUp && (
               <div className="flex justify-end">
@@ -301,7 +357,9 @@ export function LoginPage() {
               <button
                 onClick={() => {
                   setIsSignUp(!isSignUp);
-                  setFormData({ name: "", email: "", password: "", role: "patient" });
+                  setFormData({ name: "", email: "", password: "", confirmPassword: "", role: "patient" });
+                  setShowPassword(false);
+                  setShowConfirmPassword(false);
                 }}
                 className="text-green-600 dark:text-green-400 font-semibold hover:text-green-700 dark:hover:text-green-300 transition-colors"
               >
