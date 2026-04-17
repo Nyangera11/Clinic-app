@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "start": "cd backend && npm start",
+    "start": "npm run build && cd backend && npm start",
     "postinstall": "cd backend && npm install",
     "heroku-postbuild": "npm run build"
   },

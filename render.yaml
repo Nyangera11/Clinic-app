@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: mobile-health-clinic
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build && cd backend && npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_MODULES_CACHE
+        value: true
+    routes:
+      - path: /
+        methods:
+          - GET
+        dest: /
+      - path: /api
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+        dest: /api

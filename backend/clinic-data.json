@@ -51,6 +51,15 @@
       "phone": "0700347654",
       "role": "patient",
       "createdAt": "2026-04-13T08:57:01.574Z"
+    },
+    {
+      "id": 8,
+      "name": "Dr. Ken Mugo",
+      "email": "mugo@gmail.com",
+      "passwordHash": "$2a$10$cD1NJm21IRaLAPcxFU3hFe09wNezj1Q0CHau9wD76w7qWfoVBhdSG",
+      "phone": "0703746287",
+      "role": "health_worker",
+      "createdAt": "2026-04-17T06:57:35.165Z"
     }
   ],
   "patients": [
