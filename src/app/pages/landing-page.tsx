@@ -1,34 +1,47 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Heart, MapPin, Users, Activity, Clock, Shield, ChevronRight, MessageCircle } from "lucide-react";
+import { Heart, MapPin, Users, Activity, Clock, Shield, ChevronRight, MessageCircle, Moon, Sun } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { AIChatAssistant } from "../components/ai-chat-assistant";
+import { useDarkMode } from "../context/DarkModeContext";
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <div className="bg-green-600 p-2 rounded-lg">
                 <Heart className="w-6 h-6 text-white" fill="white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">Mobile Health Clinic</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white">Mobile Health Clinic</span>
             </div>
             <div className="hidden md:flex items-center gap-6">
-              <button onClick={() => navigate("/")} className="text-gray-700 hover:text-green-600 font-medium">
+              <button onClick={() => navigate("/")} className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-medium">
                 Home
               </button>
-              <button onClick={() => navigate("/about")} className="text-gray-700 hover:text-green-600 font-medium">
+              <button onClick={() => navigate("/about")} className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-medium">
                 About
               </button>
-              <button onClick={() => navigate("/services")} className="text-gray-700 hover:text-green-600 font-medium">
+              <button onClick={() => navigate("/services")} className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-medium">
                 Services
+              </button>
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                title="Toggle Dark Mode"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600" />
+                )}
               </button>
               <button
                 onClick={() => navigate("/login")}
@@ -37,25 +50,37 @@ export function LandingPage() {
                 Get Started
               </button>
             </div>
-            <button
-              onClick={() => navigate("/login")}
-              className="md:hidden bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"
-            >
-              Login
-            </button>
+            <div className="md:hidden flex items-center gap-2">
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600" />
+                )}
+              </button>
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"
+              >
+                Login
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-50 to-green-100 py-20">
+      <section className="relative bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-900 dark:to-gray-800 py-20 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
                 Healthcare Delivered to Your Doorstep
               </h1>
-              <p className="text-xl text-gray-700 mb-8">
+              <p className="text-xl text-gray-700 dark:text-gray-300 mb-8">
                 Bringing quality medical services to rural communities in Turkana County through AI-powered mobile health clinics.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -68,7 +93,7 @@ export function LandingPage() {
                 </button>
                 <button
                   onClick={() => navigate("/services")}
-                  className="border-2 border-green-600 text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors"
+                  className="border-2 border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   View Services
                 </button>

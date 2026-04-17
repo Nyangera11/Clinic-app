@@ -10,11 +10,16 @@ import {
   Pill,
   Smile,
   Users,
+  Phone,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { useDarkMode } from "../context/DarkModeContext";
 
 export function ServicesPage() {
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const services = [
     {
@@ -87,26 +92,43 @@ export function ServicesPage() {
       price: 1100,
       color: "bg-orange-100 text-orange-600",
     },
+    {
+      icon: Phone,
+      name: "Consultation",
+      description: "Remote consultations with medical professionals via phone or video",
+      price: 400,
+      color: "bg-teal-100 text-teal-600",
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <button onClick={() => navigate("/")} className="flex items-center gap-2">
               <div className="bg-green-600 p-2 rounded-lg">
                 <Heart className="w-6 h-6 text-white" fill="white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">Mobile Health Clinic</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white">Mobile Health Clinic</span>
             </button>
             <div className="flex items-center gap-4">
-              <button onClick={() => navigate("/")} className="text-gray-700 hover:text-green-600 font-medium">
+              <button onClick={() => navigate("/")} className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-medium">
                 Home
               </button>
-              <button onClick={() => navigate("/about")} className="text-gray-700 hover:text-green-600 font-medium">
+              <button onClick={() => navigate("/about")} className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 font-medium">
                 About
+              </button>
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600" />
+                )}
               </button>
               <button
                 onClick={() => navigate("/login")}
@@ -120,12 +142,12 @@ export function ServicesPage() {
       </nav>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-green-50 to-green-100 py-20">
+      <section className="bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-900 dark:to-gray-800 py-20 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
             Our Medical Services
           </h1>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
             Comprehensive healthcare delivered directly to your community with the help of advanced technology
           </p>
         </div>
@@ -200,11 +222,11 @@ export function ServicesPage() {
       </section>
 
       {/* Services Grid */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Complete Healthcare Services</h2>
-            <p className="text-xl text-gray-600">All the medical services you need, delivered to your doorstep</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Complete Healthcare Services</h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400">All the medical services you need, delivered to your doorstep</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => {
@@ -212,18 +234,18 @@ export function ServicesPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white border-2 border-gray-100 rounded-xl p-6 hover:border-green-600 hover:shadow-lg transition-all flex flex-col"
+                  className="bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl p-6 hover:border-green-600 dark:hover:border-green-500 hover:shadow-lg dark:hover:shadow-green-900/50 transition-all flex flex-col"
                 >
                   <div className={`${service.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
                     <Icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{service.name}</h3>
-                  <p className="text-gray-600 mb-4 flex-grow">{service.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{service.name}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 flex-grow">{service.description}</p>
                   
-                  <div className="border-t pt-4 flex items-center justify-between">
+                  <div className="border-t dark:border-gray-700 pt-4 flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Price per Service</p>
-                      <p className="text-2xl font-bold text-green-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Price per Service</p>
+                      <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                         KES {service.price.toLocaleString()}
                       </p>
                     </div>

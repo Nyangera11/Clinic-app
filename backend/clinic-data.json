@@ -272,7 +272,7 @@
       "provider": "Dr. Ken Mugo",
       "service": "Dental Care",
       "scheduledAt": "2026-04-22 15:40",
-      "status": "Confirmed",
+      "status": "Attended",
       "notes": "Location: Lokichoggio",
       "createdAt": "2026-04-17T07:17:28.087Z"
     }
@@ -356,6 +356,14 @@
       "treatment": "Rest advised ",
       "notes": null,
       "createdAt": "2026-04-13T08:54:34.796Z"
+    },
+    {
+      "id": 4,
+      "patient_id": 12,
+      "diagnosis": "Dental Care",
+      "treatment": "Rest",
+      "notes": null,
+      "createdAt": "2026-04-17T07:59:35.297Z"
     }
   ],
   "prescriptions": [],

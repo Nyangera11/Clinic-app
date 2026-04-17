@@ -25,6 +25,7 @@ const services = [
   "Surgery",
   "Oncology",
   "Nephrology",
+  "Consultation",
 ];
 
 const SERVICE_PRICES: Record<string, number> = {
@@ -48,6 +49,7 @@ const SERVICE_PRICES: Record<string, number> = {
   "Surgery": 5000,
   "Oncology": 3500,
   "Nephrology": 2800,
+  "Consultation": 400,
 };
 
 const providers = [
