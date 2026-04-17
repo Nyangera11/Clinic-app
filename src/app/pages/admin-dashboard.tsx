@@ -87,13 +87,6 @@ export function AdminDashboard() {
     { patient: "Sarah Lokiru", service: "Maternal Care", time: "02:00 PM", status: "Pending" },
   ];
 
-  const healthWorkers = [
-    { name: "Dr. Mary Wanjiru", role: "Medical Officer", patients: 45, status: "Active" },
-    { name: "CHW John Ekiru", role: "Community Health Worker", patients: 38, status: "Active" },
-    { name: "Nurse Sarah Arot", role: "Registered Nurse", patients: 52, status: "Active" },
-    { name: "Lab Tech David Lokai", role: "Laboratory Technician", patients: 29, status: "On Leave" },
-  ];
-
   const clinicLocations = [
     { location: "Kakuma Village", date: "March 10, 2026", appointments: 15, status: "Scheduled" },
     { location: "Lodwar Town", date: "March 15, 2026", appointments: 22, status: "Scheduled" },
