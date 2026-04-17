@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Calendar, MapPin, Clock, Heart, ChevronLeft, Plus } from "lucide-react";
 import { apiCall, getApiUrl } from "../utils/api";
+import { formatPrice, calculateTotal } from "../utils/pricing";
 
 const services = [
   "General Checkup",
@@ -25,6 +26,29 @@ const services = [
   "Oncology",
   "Nephrology",
 ];
+
+const SERVICE_PRICES: Record<string, number> = {
+  "General Checkup": 500,
+  "Vaccination": 1500,
+  "Laboratory Tests": 800,
+  "Maternal Care": 1200,
+  "Dental Care": 2000,
+  "Pediatric Care": 900,
+  "Mental Health Counseling": 1100,
+  "Chronic Disease Management": 1300,
+  "Nutrition Counseling": 600,
+  "Antenatal Care": 1400,
+  "Eye Care": 1800,
+  "Dermatology": 1600,
+  "Cardiology": 2500,
+  "Orthopedics": 2000,
+  "Emergency Care": 3000,
+  "Physiotherapy": 1000,
+  "Radiology": 2200,
+  "Surgery": 5000,
+  "Oncology": 3500,
+  "Nephrology": 2800,
+};
 
 const providers = [
   "Dr. Mary Wanjiru",
@@ -56,6 +80,7 @@ export function AppointmentsPage() {
     location: "",
     provider: "",
     time: "",
+    price: 0,
   });
   const [upcomingAppointments, setUpcomingAppointments] = useState<any[]>([]);
   const [bookingLoading, setBookingLoading] = useState(false);
@@ -325,7 +350,14 @@ export function AppointmentsPage() {
                 </label>
                 <select
                   value={newAppointment.service}
-                  onChange={(e) => setNewAppointment({ ...newAppointment, service: e.target.value })}
+                  onChange={(e) => {
+                    const selectedService = e.target.value;
+                    setNewAppointment({ 
+                      ...newAppointment, 
+                      service: selectedService,
+                      price: SERVICE_PRICES[selectedService] || 0
+                    });
+                  }}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
                   required
                 >
@@ -411,6 +443,21 @@ export function AppointmentsPage() {
                 />
               </div>
 
+              {newAppointment.service && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Service Cost</p>
+                      <p className="text-xl font-bold text-green-600">{formatPrice(newAppointment.price)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">Total Amount</p>
+                      <p className="text-2xl font-bold text-green-700">{formatPrice(newAppointment.price)}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={bookingLoading}
@@ -461,6 +508,10 @@ export function AppointmentsPage() {
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">Provider:</span> {appointment.provider || "Any"}
                     </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Cost:</span>
+                    <span className="text-lg font-bold text-green-600">{formatPrice(SERVICE_PRICES[appointment.service] || 0)}</span>
                   </div>
                   <div className="mt-4 flex gap-3">
                     <button

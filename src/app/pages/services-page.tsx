@@ -21,60 +21,70 @@ export function ServicesPage() {
       icon: Stethoscope,
       name: "General Checkup",
       description: "Comprehensive health examinations and consultations for all ages",
+      price: 500,
       color: "bg-blue-100 text-blue-600",
     },
     {
       icon: Syringe,
       name: "Vaccination",
       description: "Immunizations for children and adults including COVID-19, measles, polio",
+      price: 1500,
       color: "bg-green-100 text-green-600",
     },
     {
       icon: TestTube,
       name: "Laboratory Tests",
       description: "Blood tests, malaria screening, HIV testing, and diagnostic services",
+      price: 800,
       color: "bg-purple-100 text-purple-600",
     },
     {
       icon: Baby,
       name: "Maternal & Child Care",
       description: "Prenatal care, postnatal support, and pediatric health services",
+      price: 1200,
       color: "bg-pink-100 text-pink-600",
     },
     {
       icon: Activity,
       name: "Chronic Disease Management",
       description: "Monitoring and treatment for diabetes, hypertension, and other conditions",
+      price: 2000,
       color: "bg-red-100 text-red-600",
     },
     {
       icon: Heart,
       name: "Cardiology Screening",
       description: "Heart health monitoring and cardiovascular disease prevention",
+      price: 2500,
       color: "bg-rose-100 text-rose-600",
     },
     {
       icon: Eye,
       name: "Eye Examinations",
       description: "Vision testing and basic eye care services",
+      price: 600,
       color: "bg-indigo-100 text-indigo-600",
     },
     {
       icon: Pill,
       name: "Malaria Treatment",
       description: "Testing, treatment, and prevention of malaria",
+      price: 1000,
       color: "bg-yellow-100 text-yellow-600",
     },
     {
       icon: Smile,
       name: "Dental Care",
       description: "Basic dental checkups and oral health education",
+      price: 700,
       color: "bg-cyan-100 text-cyan-600",
     },
     {
       icon: Users,
       name: "TB Screening",
       description: "Tuberculosis testing and treatment referrals",
+      price: 1100,
       color: "bg-orange-100 text-orange-600",
     },
   ];
@@ -202,13 +212,28 @@ export function ServicesPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white border-2 border-gray-100 rounded-xl p-6 hover:border-green-600 hover:shadow-lg transition-all"
+                  className="bg-white border-2 border-gray-100 rounded-xl p-6 hover:border-green-600 hover:shadow-lg transition-all flex flex-col"
                 >
                   <div className={`${service.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
                     <Icon className="w-6 h-6" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">{service.name}</h3>
-                  <p className="text-gray-600">{service.description}</p>
+                  <p className="text-gray-600 mb-4 flex-grow">{service.description}</p>
+                  
+                  <div className="border-t pt-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Price per Service</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        KES {service.price.toLocaleString()}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    >
+                      Book Now
+                    </button>
+                  </div>
                 </div>
               );
             })}
