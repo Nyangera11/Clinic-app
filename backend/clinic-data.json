@@ -60,6 +60,15 @@
       "phone": "0703746287",
       "role": "health_worker",
       "createdAt": "2026-04-17T06:57:35.165Z"
+    },
+    {
+      "id": 9,
+      "name": "Mr. Nyang'era",
+      "email": "zawadijosh788@gmail.com",
+      "passwordHash": "$2a$10$dphfRKTIGhbtdzQB.BuHGuahU8xDDIO2SY1KvFYLH1MYNOIXUffHO",
+      "phone": "0115099166",
+      "role": "admin",
+      "createdAt": "2026-04-17T08:30:47.270Z"
     }
   ],
   "patients": [

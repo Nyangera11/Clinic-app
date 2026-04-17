@@ -12,11 +12,15 @@ import {
   LogOut,
   BarChart3,
 } from "lucide-react";
+import { getApiUrl } from "../utils/api";
 
 export function AdminDashboard() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("overview");
+  const [patients, setPatients] = useState<any[]>([]);
+  const [healthWorkers, setHealthWorkers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem("currentUser");
@@ -30,7 +34,37 @@ export function AdminDashboard() {
       return;
     }
     setCurrentUser(userData);
+    loadUsers();
   }, [navigate]);
+
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      // Try to fetch from API first
+      try {
+        const patientsRes = await fetch(`${getApiUrl()}/api/users/patients`);
+        const workersRes = await fetch(`${getApiUrl()}/api/users/doctors`);
+        
+        if (patientsRes.ok) {
+          setPatients(await patientsRes.json());
+        }
+        if (workersRes.ok) {
+          setHealthWorkers(await workersRes.json());
+        }
+      } catch (apiError) {
+        // Fallback to localStorage if API fails
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const patientsList = users.filter((u: any) => u.role === "patient");
+        const workersList = users.filter((u: any) => u.role === "health_worker");
+        setPatients(patientsList);
+        setHealthWorkers(workersList);
+      }
+    } catch (error) {
+      console.error("Error loading users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -40,9 +74,9 @@ export function AdminDashboard() {
   if (!currentUser) return null;
 
   const stats = [
-    { label: "Total Patients", value: "1,247", change: "+12%", icon: Users, color: "bg-blue-600" },
+    { label: "Total Patients", value: patients.length.toString(), change: "+12%", icon: Users, color: "bg-blue-600" },
     { label: "Appointments Today", value: "18", change: "+5%", icon: Calendar, color: "bg-green-600" },
-    { label: "Active Health Workers", value: "24", change: "0%", icon: Activity, color: "bg-purple-600" },
+    { label: "Active Health Workers", value: healthWorkers.length.toString(), change: "0%", icon: Activity, color: "bg-purple-600" },
     { label: "Villages Served", value: "52", change: "+3", icon: MapPin, color: "bg-orange-600" },
   ];
 
@@ -124,7 +158,7 @@ export function AdminDashboard() {
 
         {/* Navigation Tabs */}
         <div className="bg-white rounded-xl shadow-sm mb-8 p-2">
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-5 gap-2">
             <button
               onClick={() => setActiveTab("overview")}
               className={`py-3 px-4 rounded-lg font-medium transition-colors ${
@@ -146,6 +180,16 @@ export function AdminDashboard() {
               Appointments
             </button>
             <button
+              onClick={() => setActiveTab("patients")}
+              className={`py-3 px-4 rounded-lg font-medium transition-colors ${
+                activeTab === "patients"
+                  ? "bg-green-600 text-white"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              Patients ({patients.length})
+            </button>
+            <button
               onClick={() => setActiveTab("staff")}
               className={`py-3 px-4 rounded-lg font-medium transition-colors ${
                 activeTab === "staff"
@@ -153,7 +197,7 @@ export function AdminDashboard() {
                   : "text-gray-700 hover:bg-gray-100"
               }`}
             >
-              Health Workers
+              Health Workers ({healthWorkers.length})
             </button>
             <button
               onClick={() => setActiveTab("locations")}
@@ -282,42 +326,85 @@ export function AdminDashboard() {
           </div>
         )}
 
+        {/* Patients Tab */}
+        {activeTab === "patients" && (
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Registered Patients</h2>
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">Loading patients...</p>
+              </div>
+            ) : patients.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">No patients registered yet</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Phone</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Registration Date</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {patients.map((patient, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-gray-900 font-medium">{patient.name || "N/A"}</td>
+                        <td className="px-4 py-3 text-gray-600">{patient.email}</td>
+                        <td className="px-4 py-3 text-gray-600">{patient.phone || "N/A"}</td>
+                        <td className="px-4 py-3 text-gray-600 text-sm">{new Date().toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Health Workers Tab */}
         {activeTab === "staff" && (
           <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Health Workers</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Patients</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {healthWorkers.map((worker, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-gray-900">{worker.name}</td>
-                      <td className="px-4 py-3 text-gray-600">{worker.role}</td>
-                      <td className="px-4 py-3 text-gray-600">{worker.patients}</td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            worker.status === "Active"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-700"
-                          }`}
-                        >
-                          {worker.status}
-                        </span>
-                      </td>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Community Health Workers</h2>
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">Loading health workers...</p>
+              </div>
+            ) : healthWorkers.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">No health workers registered yet</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Phone</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {healthWorkers.map((worker, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-gray-900 font-medium">{worker.name || "N/A"}</td>
+                        <td className="px-4 py-3 text-gray-600">{worker.email}</td>
+                        <td className="px-4 py-3 text-gray-600">{worker.phone || "N/A"}</td>
+                        <td className="px-4 py-3">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            Active
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
