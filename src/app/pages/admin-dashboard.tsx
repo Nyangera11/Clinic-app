@@ -20,6 +20,7 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [patients, setPatients] = useState<any[]>([]);
   const [healthWorkers, setHealthWorkers] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export function AdminDashboard() {
     }
     setCurrentUser(userData);
     loadUsers();
+    loadAppointments();
   }, [navigate]);
 
   const loadUsers = async () => {
@@ -64,6 +66,45 @@ export function AdminDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadAppointments = async () => {
+    try {
+      // Try to fetch from API first
+      try {
+        const appointmentsRes = await fetch(`${getApiUrl()}/api/appointments`);
+        if (appointmentsRes.ok) {
+          const data = await appointmentsRes.json();
+          setAppointments(data);
+        }
+      } catch (apiError) {
+        // Fallback to localStorage if API fails
+        const userAppointments = JSON.parse(localStorage.getItem("appointments") || "[]");
+        setAppointments(userAppointments);
+      }
+    } catch (error) {
+      console.error("Error loading appointments:", error);
+    }
+  };
+
+  const getCurrentAppointments = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return appointments.filter((apt: any) => {
+      const aptDate = new Date(apt.scheduledAt || apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate >= today;
+    });
+  };
+
+  const getPastAppointments = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return appointments.filter((apt: any) => {
+      const aptDate = new Date(apt.scheduledAt || apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate < today;
+    });
   };
 
   const handleLogout = () => {
@@ -280,41 +321,115 @@ export function AdminDashboard() {
 
         {/* Appointments Tab */}
         {activeTab === "appointments" && (
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Today's Appointments</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Patient</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Service</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Time</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {recentAppointments.map((apt, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-gray-900">{apt.patient}</td>
-                      <td className="px-4 py-3 text-gray-600">{apt.service}</td>
-                      <td className="px-4 py-3 text-gray-600">{apt.time}</td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            apt.status === "Completed"
-                              ? "bg-green-100 text-green-700"
-                              : apt.status === "In Progress"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-yellow-100 text-yellow-700"
-                          }`}
-                        >
-                          {apt.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="space-y-8">
+            {/* Current Appointments */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Upcoming Appointments</h2>
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-600">Loading appointments...</p>
+                </div>
+              ) : getCurrentAppointments().length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-600">No upcoming appointments</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Patient</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Service</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Date & Time</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Location</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {getCurrentAppointments().map((apt, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-900 font-medium">{apt.patientName || apt.patient || "N/A"}</td>
+                          <td className="px-4 py-3 text-gray-600">{apt.service}</td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {apt.scheduledAt 
+                              ? new Date(apt.scheduledAt).toLocaleString() 
+                              : apt.date 
+                              ? `${apt.date} ${apt.time || ""}`.trim()
+                              : "N/A"}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">{apt.location || "TBD"}</td>
+                          <td className="px-4 py-3">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                apt.status === "Completed"
+                                  ? "bg-green-100 text-green-700"
+                                  : apt.status === "Confirmed"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : apt.status === "In Progress"
+                                  ? "bg-purple-100 text-purple-700"
+                                  : "bg-yellow-100 text-yellow-700"
+                              }`}
+                            >
+                              {apt.status || "Pending"}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Past Appointments */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Past Appointments</h2>
+              {getPastAppointments().length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-600">No past appointments</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Patient</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Service</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Date & Time</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Location</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {getPastAppointments().map((apt, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-900 font-medium">{apt.patientName || apt.patient || "N/A"}</td>
+                          <td className="px-4 py-3 text-gray-600">{apt.service}</td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {apt.scheduledAt 
+                              ? new Date(apt.scheduledAt).toLocaleString() 
+                              : apt.date 
+                              ? `${apt.date} ${apt.time || ""}`.trim()
+                              : "N/A"}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">{apt.location || "TBD"}</td>
+                          <td className="px-4 py-3">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                apt.status === "Completed"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-gray-100 text-gray-700"
+                              }`}
+                            >
+                              {apt.status || "N/A"}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}
